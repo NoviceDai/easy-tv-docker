@@ -9,7 +9,7 @@ on:
 env:
   UPLOAD_RELEASE: true
   TAG_NO:
-  TARNAME: easy-itv-daix-$(date +"%Y%m%d").tar
+  TARNAME:
   TZ: Asia/Shanghai
  
 
@@ -34,6 +34,8 @@ jobs:
 
       - name: Build the Docker image
         run: |
+          echo "TAG_NO=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV  
+          echo "TARNAME=easy-itv-daix-${{env.TAG_NO}}.tar" >> $GITHUB_ENV  
           docker build . --file Dockerfile --tag easy-itv-daix:tmp
           docker save -o ${{env.TARNAME}} easy-itv-daix:tmp
 
@@ -44,7 +46,7 @@ jobs:
         run: |
           touch release.txt
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> release.txt
-          echo "TAG_NO=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV  
+
 
 
       - name: Upload image.tar to release
@@ -55,4 +57,4 @@ jobs:
         with:
           tag_name: ${{env.TAG_NO}}
           body_path: release.txt
-          files: easy-itv-daix.tar
+          files: ${{env.TARNAME}}
