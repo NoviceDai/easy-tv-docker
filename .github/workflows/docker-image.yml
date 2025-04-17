@@ -34,7 +34,8 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          echo "TANAME=easy-itv-daix-$(date +"%Y%m%d").tar" >> $GITHUB_ENV  
+          echo "TARNAME=easy-itv-daix-$(date +"%Y%m%d").tar" >> $GITHUB_ENV  
+          echo ${{env.TARNAME}}
           docker build . --file Dockerfile --tag easy-itv-daix:tmp
           docker save -o ${{env.TARNAME}} easy-itv-daix:tmp
 
