@@ -8,7 +8,6 @@ on:
 
 env:
   UPLOAD_RELEASE: true
-  REMOVE_ARTIFACTS: true
   TZ: Asia/Shanghai
  
 
@@ -32,4 +31,26 @@ jobs:
           go mod tidy
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag easy-itv-daix:$(date +%s)
+        run: |
+          docker build . --file Dockerfile --tag easy-itv-daix:tmp
+          docker save -o easy-itv-daix-$(date +%s).tar easy-itv-daix:tmp
+
+  
+      - name: Generate release tag
+        id: tag
+        if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+        run: |
+          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+          touch release.txt
+          [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload image.tar to release
+        uses: softprops/action-gh-release@master
+        if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: $(date +"%Y.%m.%d-%H%M")
+          body_path: release.txt
+          files: easy-itv-daix-$(date +%s).tar
