@@ -52,6 +52,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: env.TAG_NO
+          tag_name: ${{env.TAG_NO}}
           body_path: release.txt
           files: easy-itv-daix.tar

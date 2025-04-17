@@ -1,7 +1,7 @@
 package config
 
 // 基础配置
-const Version = "20250415.0000"
+const Version = "20250417.0000"
 const Port = "8123"
 const Debug bool = false
 
