@@ -8,8 +8,7 @@ on:
 
 env:
   UPLOAD_RELEASE: true
-  TAG_NO:
-  TARNAME:
+  TAG_NO: 
   TZ: Asia/Shanghai
  
 
@@ -31,14 +30,12 @@ jobs:
           go version
           go install mvdan.cc/garble@latest
           go mod tidy
+          echo "TAG_NO=$(date +"%Y%m%d-%H%M")" >> $GITHUB_ENV  
 
       - name: Build the Docker image
-        run: |
-          echo "TAG_NO=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV  
-          echo "TARNAME=easy-itv-daix-${{env.TAG_NO}}.tar" >> $GITHUB_ENV  
+        run: | 
           docker build . --file Dockerfile --tag easy-itv-daix:tmp
-          docker save -o ${{env.TARNAME}} easy-itv-daix:tmp
-
+          docker save -o easy-itv-daix-${{env.TAG_NO}}.tar easy-itv-daix:tmp
   
       - name: Generate release tag
         id: tag
@@ -46,8 +43,6 @@ jobs:
         run: |
           touch release.txt
           echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> release.txt
-
-
 
       - name: Upload image.tar to release
         uses: softprops/action-gh-release@master
@@ -57,4 +52,4 @@ jobs:
         with:
           tag_name: ${{env.TAG_NO}}
           body_path: release.txt
-          files: ${{env.TARNAME}}
+          files: easy-itv-daix-${{env.TAG_NO}}.tar
