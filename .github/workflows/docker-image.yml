@@ -33,7 +33,7 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build . --file Dockerfile --tag easy-itv-daix:tmp
-          docker save -o easy-itv-daix-$(date +%s).tar easy-itv-daix:tmp
+          docker save -o easy-itv-daix.tar easy-itv-daix:tmp
 
   
       - name: Generate release tag
@@ -52,4 +52,4 @@ jobs:
         with:
           tag_name: $(date +"%Y.%m.%d-%H%M")
           body_path: release.txt
-          files: easy-itv-daix-$(date +%s).tar
+          files: easy-itv-daix.tar
