@@ -1,10 +1,17 @@
-name: Docker Image CI
+name: Easy-itv DockerImage  
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+env:
+  UPLOAD_RELEASE: true
+  REMOVE_ARTIFACTS: true
+  TZ: Asia/Shanghai
+ 
+
 
 jobs:
 
@@ -13,6 +20,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag easy-itv-daix:$(date +%s)
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Install Golang
+        run: |
+          wget https://studygolang.com/dl/golang/go1.23.6.linux-amd64.tar.gz      
+          sudo tar -C /usr/local -zxvf go1.23.6.linux-amd64.tar.gz
+          go version
+          go install mvdan.cc/garble@latest
+          go mod tidy
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag easy-itv-daix:$(date +%s)
